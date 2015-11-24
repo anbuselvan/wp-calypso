@@ -30,7 +30,7 @@ var DEFAULT_SNIPPET_LENGTH = 100;
  * and also because lunr.js is designed to be memory resident
  */
 function queryDocs( query ) {
-	var results = docsIndex.search( query ).map( function ( result ) {
+	var results = docsIndex.search( query ).map( function( result ) {
 		var doc = documents[result.ref],
 			snippet = makeSnippet( doc, query );
 
@@ -49,12 +49,12 @@ function queryDocs( query ) {
  */
 function listDocs( filePaths ) {
 
-	var results = filePaths.map( function ( path ) {
-		var doc = find( documents, function ( entry ) {
+	var results = filePaths.map( function( path ) {
+		var doc = find( documents, function( entry ) {
 			return entry.path === path;
 		});
 
-		if( doc ) {
+		if ( doc ) {
 			return {
 				path: path,
 				title: doc.title,
@@ -80,8 +80,8 @@ function listDocs( filePaths ) {
 function makeSnippet( doc, query ) {
 
 	// generate a regex of the form /[^a-zA-Z](term1|term2)/ for the query "term1 term2"
-	var termRegexMatchers = lunr.tokenizer( query ).
-		map( function ( term ) {
+	var termRegexMatchers = lunr.tokenizer( query )
+		.map( function( term ) {
 			return escapeRegexString( term );
 		} );
 
@@ -105,7 +105,7 @@ function makeSnippet( doc, query ) {
 		);
 	}
 
-	if( snippets.length ) {
+	if ( snippets.length ) {
 		return '...' + snippets.join(' ... ') + '...';
 	} else {
 		return defaultSnippet( doc );
@@ -127,7 +127,7 @@ module.exports = function() {
 	var app = express();
 
 	// this middleware enforces access control
-	app.use( '/devdocs/service', function ( request, response, next ) {
+	app.use( '/devdocs/service', function( request, response, next ) {
 		if ( ! config.isEnabled( 'devdocs' ) ) {
 			response.status( 404 );
 			next("Not found");
@@ -137,13 +137,13 @@ module.exports = function() {
 	} );
 
 	// search the documents using a search phrase "q"
-	app.get( '/devdocs/service/search', function ( request, response ) {
+	app.get( '/devdocs/service/search', function( request, response ) {
 		var query = request.query.q;
 
-		if( ! query ) {
-			response.
-				status( 400 ).
-				json( {
+		if ( ! query ) {
+			response
+				.status( 400 )
+				.json( {
 					message: 'Missing required "q" parameter'
 				} );
 			return;
@@ -153,13 +153,13 @@ module.exports = function() {
 	} );
 
 	// return a listing of documents from filenames supplied in the "files" parameter
-	app.get( '/devdocs/service/list', function ( request, response ) {
+	app.get( '/devdocs/service/list', function( request, response ) {
 		var files = request.query.files;
 
-		if( ! files ) {
-			response.
-				status( 400 ).
-				json( {
+		if ( ! files ) {
+			response
+				.status( 400 )
+				.json( {
 					message: 'Missing required "files" parameter'
 				} );
 			return;
@@ -169,13 +169,13 @@ module.exports = function() {
 	} );
 
 	// return the HTML content of a document (assumes that the document is in markdown format)
-	app.get( '/devdocs/service/content', function ( request, response ) {
+	app.get( '/devdocs/service/content', function( request, response ) {
 		var path = request.query.path;
 
 		if ( ! path ) {
-			response.
-				status( 400 ).
-				send( 'Need to provide a file path (e.g. path=client/devdocs/README.md)' );
+			response
+				.status( 400 )
+				.send( 'Need to provide a file path (e.g. path=client/devdocs/README.md)' );
 			return;
 		}
 
@@ -190,9 +190,9 @@ module.exports = function() {
 		}
 
 		if ( ! path ) {
-			response.
-				status( 404 ).
-				send( 'File does not exist' );
+			response
+				.status( 404 )
+				.send( 'File does not exist' );
 			return;
 		}
 
